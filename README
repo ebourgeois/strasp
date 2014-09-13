@@ -1,0 +1,59 @@
+This package contains the source for the function strasp() (in strasp.c)
+which seperates (or "splits") a string according to a string of delimeters
+and returns an array of pointers to *newly* allocated strings (i.e., char **).
+
+(strasp stands for "string array seperator")
+
+The motivation for this function is to remove string manupulation that occurs
+with functions like `strsep'; the original string sent to strasp() (i.e.,
+`str') will not be modified in any way. However, the draw back to this is
+that the newly allocated array needs to be free'd().
+
+The convenience function strasp_free() is supplied (defined in strasp.c) to
+free the array of char's.
+
+For example,
+
+--
+char **array;
+char **t_array;
+
+array = strasp("PATH=/usr/bin:/sbin:/usr/local/bin", ":");
+
+if (array == NULL)
+	exit(1);
+
+/* move another pointer along array (otherwise, free will croak) */
+t_array = array;
+while (t_array && *t_array)
+	printf("%s\n", *(t_array++));
+
+strasp_free(array);
+--
+
+The above code segment will print the following:
+
+PATH=/usr/bin
+/sbin
+/usr/local/bin
+
+This package also contains a shell-like driver for testing strasp(). The
+file `main.c' is compiled (with `strasp.c') into the binary `strasp'
+by simplying calling the command `make' after configuring (See INSTALL).
+
+To use `strasp', invoke it by sending the delimeter as the first argument and
+each "command" at the strasp prompt (i.e., "strasp>") is a string you want to
+split up. For example,
+
+$ ./strasp ':'
+strasp> PATH=/usr/bin:/sbin:/usr/local/bin
+PATH=/usr/bin
+/sbin
+/usr/local/bin
+strasp> i:like:colon:seperated:sentnces.
+i
+like
+colon
+seperated
+sentnces.
+

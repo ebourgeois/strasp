@@ -1,0 +1,81 @@
+2004-01-17 Erick Bourgeois <erick@jeb.ca>
+	* configure.in: Updated version 1.8
+	* strasp.c (__strasp_trim_delims): Removed this function so that
+	malloc is used as little as possible.
+	* strasp.c (strasp): Function was considerably changed to accomadate
+	for the removal of the above function (i.e. `__strasp_trim_delims').
+	Trimming is now done at the beginning of this function to reducde the
+	number of passes over the passed string (i.e. `str').
+	Now it runs over `str' only once, thus O(n).
+	
+2004-01-04 Erick Bourgeois <erick@jeb.ca>
+	* strasp.h: Removed RETURN_ARRAY macro to reduce ambiguity.
+
+2003-12-26 Erick Bourgeois <erick@jeb.ca>
+	* configure.in: Changed STRASP_BUFSIZ template and "arg with" to
+	STRASP_ELEBUFSIZ, so that the element buffersize can be set at compile
+	time.
+	Created STRASP_ARRBUFSIZ template and "arg with" argument for
+	`configure'.
+	* strasp.h: Removed STRASP_BUFSIZ and made STRASP_ELEBUFSIZ be defined
+	directly to BUFSIZ.
+	Made STRASP_ARRBUFSIZ be a right logical shift 4 of STRASP_BUFSIZ,
+	that is, STRASP_BUFSIZ / 16
+
+2003-12-25 Erick Bourgeois <erick@jeb.ca>
+	* strasp.c (__strasp_xmalloc): Removed upper bound restriction of
+	STRASP_ELEBUFSIZ.
+	Assigned `ptr' to the return value of `memcpy'.
+	* strasp.c (__strasp_trim_delims): Renamed `end' variable to `tail'.
+	Renamed `t_str' variable to `head'.
+	Adjusted comments.
+	* strasp.c (strasp): Completly changed the algorithm:
+	Instead of passing over the array for the number of seperate strings
+	and then passing over it again to extract the strings, I implemented
+	a one pass excluding the triming phase, which, in worst case, be
+	O(n-1), i.e., all char's of delim with one char not in delim in the
+	middle of str. The one pass dynamically allocates memory for the array
+	with a new macro, STRASP_ADDELEM (see below).
+	
+	* strasp.h: Added RETURN_ARRAY, STRASP_ADDELEM, and STRASP_INSERT_STR.
+	o RETURN_ARRAY: macro for free'ing the trimmed str, NULL
+	  terminating the array and returning the array.
+	o STRASP_ADDELEM: macro for testing the possibility of adding an
+	element to the array and then realloc'ing the space for another
+	string.
+	o STRASP_INSERT_STR: macro for testing the possibility of adding a
+	string to the last allocated element (i.e., it should follow a 
+	STRASP_ADDELEM) and then allocating and assinging it to the second to
+	last element (i.e., a_size - 2) in `array' (since a_size - 1 is for
+	'\0').
+	
+2003-12-22 Erick Bourgeois <erick@jeb.ca>
+	* configure.in: Added yes/no checking for ARG_WITH option 
+	strasp-bufsiz.
+	Removed double checks for the already checked (with AC_HEADER_STDC
+	macro) STDC headers.
+	
+2003-12-20 Erick Bourgeois <erick@jeb.ca>
+	* GLOBAL: Renamed the file strasp.main.c to main.c.
+	* configure.in: Added warnings for missing headers: stdio.h, stdlib.h,
+	and string.h
+	* strasp.c: Added more comments to (and in) strasp().
+	* strasp.c (__strasp_xmalloc): Testing buffer length now incorporates
+	len of 0, instead of just < 0.
+	* strasp.c (__strasp_trim_delims): Added more comments.
+	* main.c: Made string the size of STRASP_BUFSIZ instead of BUFSIZ.
+	* Makefile.am: Changed strasp_SOURCES to incorporate the file cahnge
+	mentioned above.
+
+2003-12-17  Erick Bourgeois <erick@jeb.ca>
+	* strasp.c: Added RCSID
+	* strasp.h: Added `configure.in' and `Makefile.am'.
+	Added definition checks for BUFSIZ and STRASP_BUFSIZ:
+	if set with `configure', then that value will be used.
+	* strasp.main.c: Added RCSID
+	* strasp.main.c (main):	Removed mallinfo() 
+	function that was used to monitor malloc calls.
+	Added a shell like interface and removed static example.
+
+2003-02-17  Erick Bourgeois <erick@jeb.ca>
+	* strasp was created

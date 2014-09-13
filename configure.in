@@ -1,0 +1,78 @@
+# $Id: configure.in,v 1.3 2003/12/17 1:13:34 EST ebourgeois Exp $
+
+# Process this file with autoconf to produce a configure script.
+
+AC_PREREQ(2.58)
+AC_INIT(strasp, 1.8, erick@jeb.ca)
+AC_CONFIG_HEADERS(config.h)
+AC_CONFIG_SRCDIR([strasp.c])
+AC_CONFIG_FILES([Makefile])
+AC_CONFIG_AUX_DIR(scripts)
+
+AM_INIT_AUTOMAKE(strasp, 1.8, erick@jeb.ca)
+AM_WITH_DMALLOC()
+
+# Checks for programs.
+AC_PROG_CC
+
+# Checks for libraries.
+
+# Checks for header files.
+AC_HEADER_STDC
+
+# Checks for typedefs, structures, and compiler characteristics.
+AC_C_CONST
+
+# Checks for library functions.
+AC_FUNC_ALLOCA
+AC_FUNC_MALLOC
+AC_CHECK_FUNC(calloc,
+	      [AC_DEFINE(HAVE_CALLOC, 1, [Define to 1 if you have the calloc function.])],
+	      [AC_MSG_ERROR([Strasp requires an implementation of calloc.])])
+
+AC_CHECK_FUNC(memcpy,
+	      [AC_DEFINE(HAVE_MEMCPY, 1, [Define to 1 if you have the calloc function.])],
+	      [AC_MSG_ERROR([Strasp requires an implementation of memcpy.])])
+
+AC_CHECK_FUNC(free,
+	      [AC_DEFINE(HAVE_FREE, 1, [Define to 1 if you have the free function.])],
+	      [AC_MSG_ERROR([Strasp requires an implementation of free.])])
+
+AC_CHECK_FUNC(strlen,
+	      [AC_DEFINE(HAVE_FREE, 1, [Define to 1 if you have the strlen function.])],
+	      [AC_MSG_ERROR([Strasp requires an implementation of strlen.])])
+
+AC_CHECK_FUNC(strchr,
+	      [AC_DEFINE(HAVE_FREE, 1, [Define to 1 if you have the strchr function.])],
+	      [AC_MSG_ERROR([Strasp requires an implementation of strchr.])])
+
+# Template for defining the STRASP_ELEBUFSIZ macro;
+# this is the maximum length for each element in the array
+AH_TEMPLATE([STRASP_ELEBUFSIZ], [Set strasp's element buffer size (DEFAULT 8192).])
+AC_ARG_WITH(strasp-elebufsiz,
+	    [  --with-strasp-elebufsiz=SIZE	  Set strasp's element buffer size (DEFAULT 8192).],
+	    [
+case "$withval" in
+	yes) AC_MSG_ERROR(--with-strasp-elebufsiz requires an argument; use --with-strasp-elebufsiz=SIZE) ;;
+	''|no) ;;
+	*) AC_DEFINE_UNQUOTED(STRASP_ELEBUFSIZ,$withval) ;;
+esac 
+AC_MSG_RESULT(setting strasp's element buffer size to $withval)
+	    ])
+
+# Template for defining the STRASP_ARRBUFSIZ macro;
+# this is the maximum siz of the array
+AH_TEMPLATE([STRASP_ARRBUFSIZ], [Set strasp's array buffer size (DEFAULT 512).])
+AC_ARG_WITH(strasp-arrbufsiz,
+	    [  --with-strasp-arrbufsiz=SIZE       Set strasp's array buffer size (DEFAULT 512).],
+	    [
+case "$withval" in
+	yes) AC_MSG_ERROR(--with-strasp--arrbufsiz requires an argument; use --with-strasp-arrbufsiz=SIZE) ;;
+	''|no) ;;
+	*) AC_DEFINE_UNQUOTED(STRASP_ARRBUFSIZ,$withval) ;;
+esac
+AC_MSG_RESULT(setting strasp's array buffer size to $withval)
+	    ])
+
+
+AC_OUTPUT()
